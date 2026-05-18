@@ -211,7 +211,7 @@ async def handle_speedrun(bot: Bot, args: Message = CommandArg()) -> None:
 
     if not raw_arg:
         await speedrun_cmd.finish(
-            "用法：查榜 <分类>\n支持的榜单类型有：" + "，".join(_AVAILABLE_INPUTS)
+            "用法：/查榜 <分类>\n支持的榜单类型有：" + "，".join(_AVAILABLE_INPUTS)
         )
 
     normalized = _normalize(raw_arg)
