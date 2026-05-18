@@ -1,0 +1,10 @@
+*.log
+.env.local
+.idea/
+.vscode/
+venv/
+.venv/
+__pycache__/
+/dist/
+/logs/
+/hkbot.egg-info/
