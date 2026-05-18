@@ -98,6 +98,12 @@ def _format_time(seconds: float) -> str:
     return f"{m:02d}:{s_int:02d}"
 
 
+def _diff_date(date_str1: str, date_str2: str) -> int:
+    obj1 = datetime.fromisoformat(date_str1.replace('Z', '+00:00'))
+    obj2 = datetime.fromisoformat(date_str2.replace('Z', '+00:00'))
+    return (obj1 - obj2).days
+
+
 def _format_relative_date(date_str: str) -> str:
     if not date_str:
         return date_str
@@ -153,6 +159,8 @@ async def _fetch_data(client: httpx.AsyncClient, key: str) -> dict:
     players: list[dict] = data["data"]["players"]["data"]
 
     runs = []
+    total_dates = 0
+    total_diff_dates = 0
     for entry in runs_raw:
         place = entry["place"]
         run = entry["run"]
@@ -163,6 +171,12 @@ async def _fetch_data(client: httpx.AsyncClient, key: str) -> dict:
             ref = player_refs[0]
             player_name = _get_player_name(ref.get("id", ""), players, ref.get("name", ""))
         run_date = run.get("date", "")
+        submit_date = run.get("submitted", "")
+        verify_date = run.get("status", {}).get("verify-date", "")
+        if submit_date and verify_date:
+            diff_date = _diff_date(verify_date, submit_date)
+            total_diff_dates += diff_date
+            total_dates += 1
         runs.append({
             "place": place,
             "player": player_name,
@@ -170,8 +184,10 @@ async def _fetch_data(client: httpx.AsyncClient, key: str) -> dict:
             "date": _format_relative_date(run_date) if run_date else "",
         })
 
-    return {"name": _CATEGORY_NAMES[key], "runs": runs}
+    if total_dates == 0:
+        return {"name": _CATEGORY_NAMES[key], "runs": runs}
 
+    return {"name": _CATEGORY_NAMES[key], "runs": runs, "total_dates": total_diff_dates / total_dates}
 
 async def _request_speedrun(normalized_arg: str) -> list[dict]:
     """根据规范化的用户输入查询对应排行榜，返回 sections 列表"""
@@ -194,6 +210,10 @@ def _sections_to_text(sections: list[dict]) -> str:
             for run in sec["runs"]:
                 date_suffix = f" — {run['date']}" if run["date"] else ""
                 lines.append(f"{run['place']}. {run['player']} — {run['time']}{date_suffix}")
+        if "total_dates" in sec:
+            avg_date = sec["total_dates"]
+            if avg_date and avg_date >= 1:
+                lines.append(f"平均审核时间: {avg_date:.0f} 天")
         lines.append("")
     return "\n".join(lines).strip()
 
