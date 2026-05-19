@@ -9,7 +9,6 @@ from nonebot.adapters.qq.event import GroupAtMessageCreateEvent
 from nonebot.log import logger
 from nonebot.params import CommandArg
 from nonebot.rule import Rule
-from pylint.extensions import _check_docs_utils
 
 # ---------------------------------------------------------------------------
 # 查询链接
@@ -248,7 +247,10 @@ help_cmd = on_message(rule=Rule(_check_at_bot_only), priority=20, block=False)
 @help_cmd.handle()
 async def handle_help() -> None:
     await help_cmd.finish(
-        "用法：@我 /查榜 <分类>\n支持的榜单类型有：" + "，".join(_AVAILABLE_INPUTS)
+        "用法：\n"
+        "  @我 /查榜 <分类> - 查询游戏排行榜\n"
+        "  @我 /查个人 <用户名> - 查询用户的个人最佳成绩\n"
+        "支持的榜单类型有：" + "，".join(_AVAILABLE_INPUTS)
     )
 
 
