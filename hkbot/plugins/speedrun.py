@@ -98,10 +98,11 @@ def _format_time(seconds: float) -> str:
     return f"{m:02d}:{s_int:02d}"
 
 
-def _diff_date(date_str1: str, date_str2: str) -> int:
+def _diff_date(date_str1: str, date_str2: str) -> float:
     obj1 = datetime.fromisoformat(date_str1.replace('Z', '+00:00'))
     obj2 = datetime.fromisoformat(date_str2.replace('Z', '+00:00'))
-    return (obj1 - obj2).days
+    d = obj1 - obj2
+    return d.days + d.seconds / 86400
 
 
 def _format_relative_date(date_str: str) -> str:
@@ -212,7 +213,7 @@ def _sections_to_text(sections: list[dict]) -> str:
                 lines.append(f"{run['place']}. {run['player']} — {run['time']}{date_suffix}")
         if "total_dates" in sec:
             avg_date = sec["total_dates"]
-            if avg_date and avg_date >= 1:
+            if avg_date and avg_date >= 0.5:
                 lines.append(f"平均审核时间: {avg_date:.0f} 天")
         lines.append("")
     return "\n".join(lines).strip()
