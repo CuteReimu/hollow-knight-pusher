@@ -3,10 +3,13 @@ from __future__ import annotations
 from datetime import date, datetime
 
 import httpx
-from nonebot import on_command
-from nonebot.adapters import Bot, Message
+from nonebot import on_command, on_message
+from nonebot.adapters import Bot, Event, Message
+from nonebot.adapters.qq.event import GroupAtMessageCreateEvent
 from nonebot.log import logger
 from nonebot.params import CommandArg
+from nonebot.rule import Rule
+from pylint.extensions import _check_docs_utils
 
 # ---------------------------------------------------------------------------
 # 查询链接
@@ -223,6 +226,32 @@ def _sections_to_text(sections: list[dict]) -> str:
 # NoneBot2 命令处理器
 # ---------------------------------------------------------------------------
 
+# ---- 艾特机器人（无其他内容）触发帮助 ----
+async def _check_at_bot_only(event: Event) -> bool:
+    """Rule：@机器人且无其他有效内容（NoneBot2 已将 @bot 段剥离，直接检查剩余消息）"""
+    if not isinstance(event, GroupAtMessageCreateEvent):
+        return False
+    if not event.to_me:
+        return False
+    for seg in event.get_message():
+        if seg.type == "text":
+            if seg.data.get("text", "").strip():
+                return False  # 含非空文字
+        else:
+            return False  # 图片/表情等其他段
+    return True
+
+
+help_cmd = on_message(rule=Rule(_check_at_bot_only), priority=20, block=False)
+
+
+@help_cmd.handle()
+async def handle_help() -> None:
+    await help_cmd.finish(
+        "用法：@我 /查榜 <分类>\n支持的榜单类型有：" + "，".join(_AVAILABLE_INPUTS)
+    )
+
+
 speedrun_cmd = on_command("查榜", priority=10, block=True)
 
 
@@ -232,7 +261,7 @@ async def handle_speedrun(bot: Bot, args: Message = CommandArg()) -> None:
 
     if not raw_arg:
         await speedrun_cmd.finish(
-            "用法：/查榜 <分类>\n支持的榜单类型有：" + "，".join(_AVAILABLE_INPUTS)
+            "用法：@我 /查榜 <分类>\n支持的榜单类型有：" + "，".join(_AVAILABLE_INPUTS)
         )
 
     normalized = _normalize(raw_arg)
