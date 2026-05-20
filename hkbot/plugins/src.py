@@ -204,11 +204,11 @@ async def _get_personal_bests_text(username: str) -> str:
         # 用户
         user = await api.get_user(client, username)
         if not user:
-            return f"❌ 未找到用户 '{username}'"
+            return f"❌ 未找到用户"
         # PB
         pbs = await api.get_user_personal_bests(client, user["id"])
         if not pbs:
-            return f"❌ 用户 '{username}' 暂无 PB"
+            return f"❌ 该用户暂无 PB"
         # 处理 PB
         results = []
         for pb in pbs:
@@ -219,7 +219,7 @@ async def _get_personal_bests_text(username: str) -> str:
             except Exception as e:
                 logger.error(f"处理 PB 失败: {e}")
         if not results:
-            return f"❌ 用户 '{username}' 记录处理失败"
+            return f"❌ 记录处理失败"
         # 排序
         results.sort(key=lambda x: x["rank"] if x["rank"] is not None else 999999)
 
@@ -277,7 +277,7 @@ async def handle_personal(event: Event, args: Message = CommandArg()) -> None:
         )
     result_text = f"查询失败"
     try:
-        result_text = (await _get_personal_bests_text(username))
+        result_text = await _get_personal_bests_text(username)
     except Exception as e:
-        logger.error(f"查询个人 PB 失败: {e}")
+        logger.error(f"❌ 查询个人 PB 失败: {e}")
     await personal_cmd.finish(result_text)

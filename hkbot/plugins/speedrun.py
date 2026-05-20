@@ -263,7 +263,8 @@ async def handle_speedrun(event: Event, args: Message = CommandArg()) -> None:
 
     if not raw_arg:
         await speedrun_cmd.finish(
-            f"用法：{at_me_msg}/查榜 <分类>\r\n支持的榜单类型有：" + "，".join(_AVAILABLE_INPUTS)
+            f"用法：{at_me_msg}/查榜 <分类>\r\n"
+            "支持的榜单类型有：" + "，".join(_AVAILABLE_INPUTS)
         )
 
     normalized = _normalize(raw_arg)
