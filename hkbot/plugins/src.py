@@ -1,9 +1,9 @@
-from collections import Counter
 from typing import Dict, List, Optional, Any
 
 import httpx
 from nonebot import on_command
-from nonebot.adapters import Bot, Message
+from nonebot.adapters import Event, Message
+from nonebot.adapters.qq.event import GroupAtMessageCreateEvent
 from nonebot.log import logger
 from nonebot.params import CommandArg
 
@@ -256,7 +256,7 @@ async def _get_personal_bests_text(username: str) -> str:
                 break
             final_lines.append(line)
             current_length += len(line) + 1
-        return "\n".join(final_lines)
+        return "\r\n".join(final_lines)
 
 
 # ---------------------------------------------------------------------------
@@ -267,15 +267,15 @@ personal_cmd = on_command("查个人", priority=10, block=True)
 
 
 @personal_cmd.handle()
-async def handle_personal(bot: Bot, args: Message = CommandArg()) -> None:
+async def handle_personal(event: Event, args: Message = CommandArg()) -> None:
+    at_me_msg = "@我 " if isinstance(event, GroupAtMessageCreateEvent) else ""
     username = args.extract_plain_text().strip()
     if not username:
         await personal_cmd.finish(
-            "用法：@我 /查个人 <用户名>\n"
-            "示例：@我 /查个人 cks\n"
-            "查询用户 speedrun.com PB"
+            f"用法：{at_me_msg}/查个人 <用户名>\r\n"
+            f"示例：{at_me_msg}/查个人 SclicheD"
         )
-    result_text = f"查询用户 '{username}' 失败"
+    result_text = f"查询失败"
     try:
         result_text = (await _get_personal_bests_text(username))
     except Exception as e:

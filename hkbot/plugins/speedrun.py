@@ -4,7 +4,7 @@ from datetime import date, datetime
 
 import httpx
 from nonebot import on_command, on_message
-from nonebot.adapters import Bot, Event, Message
+from nonebot.adapters import Event, Message
 from nonebot.adapters.qq.event import GroupAtMessageCreateEvent
 from nonebot.log import logger
 from nonebot.params import CommandArg
@@ -218,7 +218,7 @@ def _sections_to_text(sections: list[dict]) -> str:
             if avg_date and avg_date >= 0.5:
                 lines.append(f"平均审核时间: {avg_date:.0f} 天")
         lines.append("")
-    return "\n".join(lines).strip()
+    return "\r\n".join(lines).strip()
 
 
 # ---------------------------------------------------------------------------
@@ -247,10 +247,9 @@ help_cmd = on_message(rule=Rule(_check_at_bot_only), priority=20, block=False)
 @help_cmd.handle()
 async def handle_help() -> None:
     await help_cmd.finish(
-        "用法：\n"
-        "  @我 /查榜 <分类> - 查询游戏排行榜\n"
-        "  @我 /查个人 <用户名> - 查询用户的个人最佳成绩\n"
-        "支持的榜单类型有：" + "，".join(_AVAILABLE_INPUTS)
+        "用法：\r\n"
+        f"  @我 /查榜 <分类> - 查询游戏排行榜\r\n"
+        f"  @我 /查个人 <用户名> - 查询用户的个人最佳成绩"
     )
 
 
@@ -258,12 +257,13 @@ speedrun_cmd = on_command("查榜", priority=10, block=True)
 
 
 @speedrun_cmd.handle()
-async def handle_speedrun(bot: Bot, args: Message = CommandArg()) -> None:
+async def handle_speedrun(event: Event, args: Message = CommandArg()) -> None:
+    at_me_msg = "@我 " if isinstance(event, GroupAtMessageCreateEvent) else ""
     raw_arg = args.extract_plain_text().strip()
 
     if not raw_arg:
         await speedrun_cmd.finish(
-            "用法：@我 /查榜 <分类>\n支持的榜单类型有：" + "，".join(_AVAILABLE_INPUTS)
+            f"用法：{at_me_msg}/查榜 <分类>\r\n支持的榜单类型有：" + "，".join(_AVAILABLE_INPUTS)
         )
 
     normalized = _normalize(raw_arg)
