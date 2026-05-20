@@ -1,8 +1,7 @@
-import json
-import os
 import re
-from pathlib import Path
 
+
+_re_space = re.compile(r'(?<![()\[\]{}%\'"A-Za-z]) (?![()\[\]{}%\'"A-Za-z])', re.NOFLAG)
 symbols = [' ', '(', ')', '[', ']', '-', '{', '}', '%', "'", '"', ',']
 
 
@@ -68,7 +67,7 @@ class RuneTrie:
             else:
                 s2 += s[0]
                 s = s[1:]
-        return s2
+        return s2 if s2 == s else _re_space.sub('', s2)
 
 
 trie = RuneTrie()
@@ -923,3 +922,9 @@ trie.put_if_absent("All Bellways", "全钟道")
 trie.put_if_absent("Cloakless", "无斗篷")
 trie.put_if_absent("No Major Glitches Cloak", "无主要邪道 斗篷线")
 trie.put_if_absent("Sinner", "罪途")
+trie.put_if_absent("0 Geo", "0吉欧")
+trie.put_if_absent("True Ending", "真结局")
+trie.put_if_absent("106% TE", "106%")
+trie.put_if_absent("107% AB", "107%")
+trie.put_if_absent("112% APB", "112%")
+trie.put_if_absent("Abyss Climb", "深渊攀爬")

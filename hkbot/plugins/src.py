@@ -14,9 +14,6 @@ _name_dict_ = {
     "Hollow Knight Category Extensions": "空洞骑士副榜",
     "Hollow Knight: Silksong": "丝之歌",
     "Hollow Knight: Silksong Category Extensions": "丝之歌副榜",
-    "Celeste": "蔚蓝",
-    "Celeste Category Extensions": "蔚蓝副榜",
-    "CELESTE Classic": "蔚蓝前作",
 }
 
 def _try_translate(s: str) -> str:
@@ -63,8 +60,9 @@ class SpeedrunPersonalBestsAPI:
         milliseconds = total_ms % 1000
 
         if hours > 0:
-            return f"{hours:02d}:{minutes:02d}:{secs:02d}.{milliseconds:03d}"
-
+            return f"{hours:d}:{minutes:02d}:{secs:02d}"
+        elif minutes >= 10:
+            return f"{minutes:02d}:{secs:02d}"
         return f"{minutes:02d}:{secs:02d}.{milliseconds:03d}"
 
     # -----------------------------------------------------------------------
@@ -116,7 +114,7 @@ class SpeedrunPersonalBestsAPI:
             params = {
                 "max": max_per_page,
                 "offset": offset,
-                "embed": "game,category",
+                "embed": "game,category,level",
             }
 
             try:
@@ -146,33 +144,10 @@ class SpeedrunPersonalBestsAPI:
         return all_pbs
 
     # -----------------------------------------------------------------------
-    # 获取 level 名称
-    # -----------------------------------------------------------------------
-
-    async def get_level_name(self, client: httpx.AsyncClient, level_id: str) -> Optional[str]:
-        if not level_id:
-            return None
-        # cache
-        if level_id in self.level_cache:
-            return self.level_cache[level_id]
-        url = f"{self.base_url}/levels/{level_id}"
-        try:
-            resp = await client.get(url)
-            if resp.status_code != 200:
-                return None
-            data = resp.json()
-            level_name = data["data"].get("name")
-            self.level_cache[level_id] = level_name
-            return level_name
-        except Exception as e:
-            logger.error(f"获取 level 失败: {e}")
-            return None
-
-    # -----------------------------------------------------------------------
     # 处理 PB
     # -----------------------------------------------------------------------
 
-    async def process_personal_best(self, client: httpx.AsyncClient, pb: Dict) -> Dict:
+    async def process_personal_best(self, pb: Dict) -> Optional[Dict]:
         run = pb.get("run", {})
         raw_time = run.get("times", {}).get("primary_t")
         place = pb.get("place")
@@ -181,29 +156,23 @@ class SpeedrunPersonalBestsAPI:
         category_data = pb.get("category", {}).get("data", {})
         game_name = game_data.get("names", {}).get("international", "未知游戏")
         category_name = category_data.get("name", "未知项目")
+        if "Hollow Knight" not in game_name:
+            return None
 
         # ---------------------------------------------------------------
         # level run 判断
         # ---------------------------------------------------------------
         level_id = run.get("level")
         if level_id:
-            level_name = await self.get_level_name(client, level_id)
-            if level_name:
-                full_name = f"{category_name} - {level_name}"
-            else:
-                full_name = category_name
-            run_type = "关卡"
+            level_data = pb.get("level", {}).get("data", {})
+            full_name = level_data.get("name", "")
         else:
             full_name = category_name
-            run_type = "全流程"
         return {
             "rank": place,
             "game": game_name,
             "category": full_name,
-            "type": run_type,
             "time": self.format_time_detailed(raw_time),
-            "date": run.get("date", "")[:10] if run.get("date") else "未知",
-            "verified": run.get("status", {}).get("status") == "verified",
         }
 
 
@@ -226,8 +195,9 @@ async def _get_personal_bests_text(username: str) -> str:
         results = []
         for pb in pbs:
             try:
-                result = await api.process_personal_best(client, pb)
-                results.append(result)
+                result = await api.process_personal_best(pb)
+                if result is not None:
+                    results.append(result)
             except Exception as e:
                 logger.error(f"处理 PB 失败: {e}")
         if not results:
@@ -241,7 +211,6 @@ async def _get_personal_bests_text(username: str) -> str:
         lines = [
             f"👤 用户: {user['name']}",
             f"📅 注册: {user['signup_date'][:10]}",
-            f"🏆 个人最佳成绩 (共 {len(results)} 条)",
             "",
         ]
 
@@ -254,19 +223,7 @@ async def _get_personal_bests_text(username: str) -> str:
             category_display = record["category"][:60] + ".." if len(record["category"]) > 60 else record["category"]
             lines.append(f"{rank_display} {game_display} {category_display} {record['time']}")
         if len(results) > 50:
-            lines.append("")
-            lines.append(f"... 还有 {len(results) - 50} 条记录未显示")
-
-        # -------------------------------------------------------------------
-        # 游戏统计
-        # -------------------------------------------------------------------
-        game_counts = Counter(r["game"] for r in results)
-        lines.append("")
-        lines.append("🎮 游戏分布:")
-        for game, count in game_counts.most_common(5):
-            game = _try_translate(game)
-            game_display = game[:30] + ".." if len(game) > 30 else game
-            lines.append(f" {game_display}: {count} 条")
+            lines.append(f"...")
 
         # -------------------------------------------------------------------
         # QQ 长度限制
