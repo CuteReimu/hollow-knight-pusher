@@ -114,7 +114,7 @@ class SpeedrunPersonalBestsAPI:
             params = {
                 "max": max_per_page,
                 "offset": offset,
-                "embed": "game,category,level",
+                "embed": "game,category,level,level.variables,category.variables",
             }
 
             try:
@@ -168,6 +168,24 @@ class SpeedrunPersonalBestsAPI:
             full_name = level_data.get("name", "")
         else:
             full_name = category_name
+
+        # ---------------------------------------------------------------
+        # values 判断
+        # ---------------------------------------------------------------
+        values = run.get("values", {})
+        for key, value in values.items():
+            if level_id:
+                variables_data = level_data.get("variables", {}).get("data", {})
+            else:
+                variables_data = category_data.get("variables", {}).get("data", {})
+            for variable in variables_data:
+                if variable.get("id") == key:
+                    if variable.get("is-subcategory", False):
+                        label = variable.get("values", {}).get("values", {}).get(value, {}).get("label")
+                        if label:
+                            full_name += f" {label}"
+                    break
+
         return {
             "rank": place,
             "game": game_name,
