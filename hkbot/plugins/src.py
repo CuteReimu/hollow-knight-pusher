@@ -7,6 +7,22 @@ from nonebot.adapters import Bot, Message
 from nonebot.log import logger
 from nonebot.params import CommandArg
 
+from hkbot.plugins.translate import trie
+
+_name_dict_ = {
+    "Hollow Knight": "空洞骑士",
+    "Hollow Knight Category Extensions": "空洞骑士副榜",
+    "Hollow Knight: Silksong": "丝之歌",
+    "Hollow Knight: Silksong Category Extensions": "丝之歌副榜",
+    "Celeste": "蔚蓝",
+    "Celeste Category Extensions": "蔚蓝副榜",
+    "CELESTE Classic": "蔚蓝前作",
+}
+
+def _try_translate(s: str) -> str:
+    if s in _name_dict_:
+        return _name_dict_[s]
+    return trie.replace_all(s)
 
 # ---------------------------------------------------------------------------
 # Speedrun API
@@ -224,55 +240,33 @@ async def _get_personal_bests_text(username: str) -> str:
         # -------------------------------------------------------------------
         lines = [
             f"👤 用户: {user['name']}",
-            f"🆔 ID: {user['id']}",
             f"📅 注册: {user['signup_date'][:10]}",
-            f"🔗 主页: {user['weblink']}",
             f"🏆 个人最佳成绩 (共 {len(results)} 条)",
-            "=" * 75,
+            "",
         ]
 
         # 最多显示 50 条
         for record in results[:50]:
-            rank_display = f"#{record['rank']}" if record["rank"] is not None else "N/A"
+            record["game"] = _try_translate(record["game"])
+            record["category"] = _try_translate(record["category"])
+            rank_display = f"#{record["rank"]}" if record["rank"] is not None else "N/A"
             game_display = record["game"][:25] + ".." if len(record["game"]) > 25 else record["game"]
-            category_display = record["category"][:30] + ".." if len(record["category"]) > 30 else record["category"]
-            verified_display = "✅" if record["verified"] else "❓"
-            lines.append(
-                f"{rank_display:<6}{game_display:<27}{category_display:<32}{record['time']:<14}{verified_display}")
+            category_display = record["category"][:60] + ".." if len(record["category"]) > 60 else record["category"]
+            lines.append(f"{rank_display} {game_display} {category_display} {record['time']}")
         if len(results) > 50:
             lines.append("")
             lines.append(f"... 还有 {len(results) - 50} 条记录未显示")
 
         # -------------------------------------------------------------------
-        # 统计
-        # -------------------------------------------------------------------
-        lines.append("")
-        lines.append("📊 统计信息")
-        lines.append("=" * 75)
-
         # 游戏统计
+        # -------------------------------------------------------------------
         game_counts = Counter(r["game"] for r in results)
         lines.append("")
         lines.append("🎮 游戏分布:")
         for game, count in game_counts.most_common(5):
+            game = _try_translate(game)
             game_display = game[:30] + ".." if len(game) > 30 else game
-            lines.append(f"   {game_display:<32}: {count:>2} 条")
-
-        # 类型统计
-        level_count = sum(1 for r in results if r["type"] == "关卡")
-        full_count = sum(1 for r in results if r["type"] == "全流程")
-        lines.append("")
-        lines.append("📋 记录类型:")
-        lines.append(f"   全流程: {full_count} 条 ({full_count / len(results) * 100:.1f}%)")
-        lines.append(f"   关卡: {level_count} 条 ({level_count / len(results) * 100:.1f}%)")
-
-        # 认证统计
-        verified_count = sum(1 for r in results if r["verified"])
-        unverified_count = (len(results) - verified_count)
-        lines.append("")
-        lines.append("✅ 认证状态:")
-        lines.append(f"   已认证: {verified_count} 条 ({verified_count / len(results) * 100:.1f}%)")
-        lines.append(f"   待认证: {unverified_count} 条 ({unverified_count / len(results) * 100:.1f}%)")
+            lines.append(f" {game_display}: {count} 条")
 
         # -------------------------------------------------------------------
         # QQ 长度限制
