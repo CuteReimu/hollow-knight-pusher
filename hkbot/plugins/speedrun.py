@@ -15,6 +15,16 @@ from nonebot.rule import Rule
 # ---------------------------------------------------------------------------
 
 _URLS: dict[str, str] = {
+    "hkany": "https://www.speedrun.com/api/v1/leaderboards/76rqmld8/category/02q8o4p2?var-yn2p3085=21gyy061",
+    "hklow": "https://www.speedrun.com/api/v1/leaderboards/76rqmld8/category/w20w0v5d?var-5lyjjd2l=4lxz6641",
+    "aa": "https://www.speedrun.com/api/v1/leaderboards/76rqmld8/category/q25epyg2?var-onv7r95n=21g8poml",
+    "ss": "https://www.speedrun.com/api/v1/leaderboards/76rqmld8/category/wkp31j02?var-e8mrpyxl=814jwwv1",
+    "hkab": "https://www.speedrun.com/api/v1/leaderboards/76rqmld8/category/824m6ng2?var-wle6d0x8=10v97vwl&var-e8m1ye86=xqkomxk1",
+    "ge": "https://www.speedrun.com/api/v1/leaderboards/76rqmld8/category/8241w7w2?var-5ly7kkkl=z1983n8q",
+    "hkte": "https://www.speedrun.com/api/v1/leaderboards/76rqmld8/category/wk617wxd?var-jlz32x82=5leope5q",
+    "as": "https://www.speedrun.com/api/v1/leaderboards/76rqmld8/category/n2y577zk?var-38dopp1l=4lxogy4l",
+    "107": "https://www.speedrun.com/api/v1/leaderboards/76rqmld8/category/vdo5xe6k?var-ql6165x8=jq6w78nl",
+    "112": "https://www.speedrun.com/api/v1/leaderboards/76rqmld8/category/xk9vrl6d?var-onvj96mn=5q870z6l",
     "anylp": "https://www.speedrun.com/api/v1/leaderboards/y65r7g81/category/zd39j4nd?var-ylq4yvzn=qzne828q&var-rn1kmmvl=qj70747q",
     "anyrp": "https://www.speedrun.com/api/v1/leaderboards/y65r7g81/category/zd39j4nd?var-ylq4yvzn=qzne828q&var-rn1kmmvl=10vzvmol",
     "te": "https://www.speedrun.com/api/v1/leaderboards/y65r7g81/category/n2y0m18d?var-dloed1dn=qyzod221",
@@ -34,6 +44,16 @@ _URLS: dict[str, str] = {
 }
 
 _CATEGORY_NAMES: dict[str, str] = {
+    "hkany": "空洞骑士 - Any% 当前版本",
+    "hklow": "空洞骑士 - Low% 当前版本",
+    "aa": "空洞骑士 - 全成就",
+    "ss": "空洞骑士 - 钢魂Any% 当前版本",
+    "hkab": "空洞骑士 - 全Boss 生命血版本",
+    "ge": "空洞骑士 - 神居结局",
+    "hkte": "空洞骑士 - 真结局",
+    "as": "空洞骑士 - 全技能",
+    "107%": "空洞骑士 - 107%AB",
+    "112%": "空洞骑士 - 112%APB",
     "anylp": "丝之歌 — Any% 斗篷",
     "anyrp": "丝之歌 — Any% 无斗篷",
     "te": "丝之歌 — True Ending",
@@ -66,10 +86,13 @@ _MAP_KEYS: dict[str, list[str]] = {
     "白宫": ["白色宫殿"],
     "act1": ["judgement", "sinner"],
     "第一幕": ["judgement", "sinner"],
+    "全技能": ["as"],
+    "全成就": ["aa"],
+    "钢魂": ["ss"],
 }
 
-_AVAILABLE_INPUTS: list[str] = ["Any%", "TE", "100%", "第一幕", "Low%", "AB", "Twisted%", "苔穴", "PoP", "白色宫殿"]
-_ALIAS_INPUTS: list[str] = ["all bosses", "all boss", "allbosses", "allboss", "苦痛", "苦痛之路", "白宫", "act1"]
+_AVAILABLE_INPUTS: list[str] = ["Any%", "HKAny%", "TE", "HKTE", "HKLow", "HKAB", "100%", "112%", "107%", "全技能", "全成就", "钢魂", "GE", "第一幕", "Low%", "AB", "Twisted%", "苔穴", "PoP", "白色宫殿"]
+_ALIAS_INPUTS: list[str] = ["all bosses", "all boss", "allbosses", "allboss", "苦痛", "苦痛之路", "白宫", "act1", "as", "aa", "ss"]
 
 
 # ---------------------------------------------------------------------------
