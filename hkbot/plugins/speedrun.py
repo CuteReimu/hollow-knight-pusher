@@ -41,6 +41,29 @@ _URLS: dict[str, str] = {
     "苔穴": "https://www.speedrun.com/api/v1/leaderboards/yd4r2x51/level/9m58yezd/xd1ypjwd?var-r8r69958=qvvpvrrq",
     "pop": "https://www.speedrun.com/api/v1/leaderboards/76rqmld8/level/r9g1qop9/wkpq608d",
     "白色宫殿": "https://www.speedrun.com/api/v1/leaderboards/76rqmld8/level/69znevg9/wkpq608d?var-r8r11k7n=klr8rr21",
+    "一门任意锁": "https://www.speedrun.com/api/v1/leaderboards/76rqmld8/level/495lx03d/wkpq608d?var-5lyppm9l=klrnokw1",
+    "一门任意锁无亡怒": "https://www.speedrun.com/api/v1/leaderboards/76rqmld8/level/495lx03d/wkpq608d?var-5lyppm9l=10vg8d5l",
+    "一门四锁": "https://www.speedrun.com/api/v1/leaderboards/76rqmld8/level/495lx03d/wkpq608d?var-5lyppm9l=21drx8gq",
+    "一门四锁当前版本": "https://www.speedrun.com/api/v1/leaderboards/76rqmld8/level/495lx03d/wkpq608d?var-5lyppm9l=jqz78pkl",
+    "二门任意锁": "https://www.speedrun.com/api/v1/leaderboards/76rqmld8/level/o9x3rvp9/wkpq608d?var-e8mrrwql=5q85wv6q",
+    "二门任意锁无亡怒": "https://www.speedrun.com/api/v1/leaderboards/76rqmld8/level/o9x3rvp9/wkpq608d?var-e8mrrwql=qj7vr8gq",
+    "二门四锁": "https://www.speedrun.com/api/v1/leaderboards/76rqmld8/level/o9x3rvp9/wkpq608d?var-e8mrrwql=4qy3g2dl",
+    "二门四锁当前版本": "https://www.speedrun.com/api/v1/leaderboards/76rqmld8/level/o9x3rvp9/wkpq608d?var-e8mrrwql=81pwvpnl",
+    "三门任意锁": "https://www.speedrun.com/api/v1/leaderboards/76rqmld8/level/rdq54v2d/wkpq608d?var-ylqmme3n=mlnrjvnq",
+    "三门任意锁无亡怒": "https://www.speedrun.com/api/v1/leaderboards/76rqmld8/level/rdq54v2d/wkpq608d?var-ylqmme3n=q65nme7l",
+    "三门四锁": "https://www.speedrun.com/api/v1/leaderboards/76rqmld8/level/rdq54v2d/wkpq608d?var-ylqmme3n=8103knp1",
+    "三门四锁当前版本": "https://www.speedrun.com/api/v1/leaderboards/76rqmld8/level/rdq54v2d/wkpq608d?var-ylqmme3n=xqkk2j4q",
+    "四门任意锁": "https://www.speedrun.com/api/v1/leaderboards/76rqmld8/level/5d7zqm6w/wkpq608d?var-gnxvvy6l=9qjjkmoq",
+    "四门任意锁无亡怒": "https://www.speedrun.com/api/v1/leaderboards/76rqmld8/level/5d7zqm6w/wkpq608d?var-gnxvvy6l=lmovym41",
+    "四门四锁": "https://www.speedrun.com/api/v1/leaderboards/76rqmld8/level/5d7zqm6w/wkpq608d?var-gnxvvy6l=jq636ooq",
+    "四门四锁当前版本": "https://www.speedrun.com/api/v1/leaderboards/76rqmld8/level/5d7zqm6w/wkpq608d?var-gnxvvy6l=gq7e0jr1",
+    "五门任意锁": "https://www.speedrun.com/api/v1/leaderboards/76rqmld8/level/kwj14q7w/wkpq608d?var-dloyyge8=5lmz030q",
+    "五门任意锁无亡怒": "https://www.speedrun.com/api/v1/leaderboards/76rqmld8/level/kwj14q7w/wkpq608d?var-dloyyge8=1w4zg05q",
+    "五门四锁": "https://www.speedrun.com/api/v1/leaderboards/76rqmld8/level/kwj14q7w/wkpq608d?var-dloyyge8=81w3x26l",
+    "五门四锁当前版本": "https://www.speedrun.com/api/v1/leaderboards/76rqmld8/level/kwj14q7w/wkpq608d?var-dloyyge8=21grv8oq",
+    "jjc1": "https://www.speedrun.com/api/v1/leaderboards/76rqmld8/level/gdr16vlw/wkpq608d",
+    "jjc2": "https://www.speedrun.com/api/v1/leaderboards/76rqmld8/level/nwlp4ve9/wkpq608d",
+    "jjc3": "https://www.speedrun.com/api/v1/leaderboards/76rqmld8/level/ywemx77d/wkpq608d",
 }
 
 _CATEGORY_NAMES: dict[str, str] = {
@@ -70,6 +93,29 @@ _CATEGORY_NAMES: dict[str, str] = {
     "苔穴": "丝之歌 — 苔穴",
     "pop": "空洞骑士 — 苦痛之路",
     "白色宫殿": "空洞骑士 — 白色宫殿 1.3.1.5+",
+    "一门任意锁": "空洞骑士 — 大师万神殿 — 任意锁",
+    "一门任意锁无亡怒": "空洞骑士 — 大师万神殿 — 任意锁 无亡怒",
+    "一门四锁": "空洞骑士 — 大师万神殿 — 四锁",
+    "一门四锁当前版本": "空洞骑士 — 大师万神殿 — 四锁 当前版本",
+    "二门任意锁": "空洞骑士 — 艺术家万神殿 — 任意锁",
+    "二门任意锁无亡怒": "空洞骑士 — 艺术家万神殿 — 任意锁 无亡怒",
+    "二门四锁": "空洞骑士 — 艺术家万神殿 — 四锁",
+    "二门四锁当前版本": "空洞骑士 — 艺术家万神殿 — 四锁 当前版本",
+    "三门任意锁": "空洞骑士 — 贤者万神殿 — 任意锁",
+    "三门任意锁无亡怒": "空洞骑士 — 贤者万神殿 — 任意锁 无亡怒",
+    "三门四锁": "空洞骑士 — 贤者万神殿 — 四锁",
+    "三门四锁当前版本": "空洞骑士 — 贤者万神殿 — 四锁 当前版本",
+    "四门任意锁": "空洞骑士 — 骑士万神殿 — 任意锁",
+    "四门任意锁无亡怒": "空洞骑士 — 骑士万神殿 — 任意锁 无亡怒",
+    "四门四锁": "空洞骑士 — 骑士万神殿 — 四锁",
+    "四门四锁当前版本": "空洞骑士 — 骑士万神殿 — 四锁 当前版本",
+    "五门任意锁": "空洞骑士 — 圣巢万神殿 — 任意锁",
+    "五门任意锁无亡怒": "空洞骑士 — 圣巢万神殿 — 任意锁 无亡怒",
+    "五门四锁": "空洞骑士 — 圣巢万神殿 — 四锁",
+    "五门四锁当前版本": "空洞骑士 — 圣巢万神殿 — 四锁 当前版本",
+    "jjc1": "空洞骑士 — 勇士的试炼",
+    "jjc2": "空洞骑士 — 征服者的试炼",
+    "jjc3": "空洞骑士 — 愚人的试炼",
 }
 
 _MAP_KEYS: dict[str, list[str]] = {
@@ -89,10 +135,16 @@ _MAP_KEYS: dict[str, list[str]] = {
     "全技能": ["as"],
     "全成就": ["aa"],
     "钢魂": ["ss"],
+    "一门": ["一门任意锁", "一门任意锁无亡怒", "一门四锁", "一门四锁当前版本"],
+    "二门": ["二门任意锁", "二门任意锁无亡怒", "二门四锁", "二门四锁当前版本"],
+    "三门": ["三门任意锁", "三门任意锁无亡怒", "三门四锁", "三门四锁当前版本"],
+    "四门": ["四门任意锁", "四门任意锁无亡怒", "四门四锁", "四门四锁当前版本"],
+    "五门": ["五门任意锁", "五门任意锁无亡怒", "五门四锁", "五门四锁当前版本"],
+    "jjc": ["jjc1", "jjc2", "jjc3"],
 }
 
-_AVAILABLE_INPUTS: list[str] = ["Any%", "HKAny%", "TE", "HKTE", "HKLow", "HKAB", "100%", "112%", "107%", "全技能", "全成就", "钢魂", "GE", "第一幕", "Low%", "AB", "Twisted%", "苔穴", "PoP", "白色宫殿"]
-_ALIAS_INPUTS: list[str] = ["all bosses", "all boss", "allbosses", "allboss", "苦痛", "苦痛之路", "白宫", "act1", "as", "aa", "ss"]
+_AVAILABLE_INPUTS: list[str] = ["Any%", "HKAny%", "TE", "HKTE", "HKLow", "HKAB", "100%", "112%", "107%", "全技能", "全成就", "钢魂", "GE", "第一幕", "Low%", "AB", "Twisted%", "苔穴", "PoP", "白色宫殿", "一门", "二门", "三门", "四门", "五门", "jjc"]
+_ALIAS_INPUTS: list[str] = ["all bosses", "all boss", "allbosses", "allboss", "苦痛", "苦痛之路", "白宫", "act1", "as", "aa", "ss", "jjc1", "jjc2", "jjc3"]
 
 
 # ---------------------------------------------------------------------------
@@ -238,8 +290,11 @@ def _sections_to_text(sections: list[dict]) -> str:
                 lines.append(f"{run['place']}. {run['player']} — {run['time']}{date_suffix}")
         if "total_dates" in sec:
             avg_date = sec["total_dates"]
-            if avg_date and avg_date >= 0.5:
-                lines.append(f"平均审核时间: {avg_date:.0f} 天")
+            if avg_date:
+                if avg_date >= 0.5:
+                    lines.append(f"平均审核时间: {avg_date:.0f} 天")
+                else:
+                    lines.append(f"平均审核时间: 小于 1 天")
         lines.append("")
     return "\r\n".join(lines).strip()
 
