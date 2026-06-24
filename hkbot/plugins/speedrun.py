@@ -5,7 +5,7 @@ from datetime import date, datetime
 import httpx
 from nonebot import on_command, on_message
 from nonebot.adapters import Event, Message
-from nonebot.adapters.qq.event import GroupAtMessageCreateEvent
+from nonebot.adapters.qq.event import GroupAtMessageCreateEvent, GroupMessageCreateEvent
 from nonebot.log import logger
 from nonebot.params import CommandArg
 from nonebot.rule import Rule
@@ -306,7 +306,7 @@ def _sections_to_text(sections: list[dict]) -> str:
 # ---- 艾特机器人（无其他内容）触发帮助 ----
 async def _check_at_bot_only(event: Event) -> bool:
     """Rule：@机器人且无其他有效内容（NoneBot2 已将 @bot 段剥离，直接检查剩余消息）"""
-    if not isinstance(event, GroupAtMessageCreateEvent):
+    if not isinstance(event, GroupAtMessageCreateEvent) and not isinstance(event, GroupMessageCreateEvent):
         return False
     if not event.to_me:
         return False

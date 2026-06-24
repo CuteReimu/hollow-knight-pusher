@@ -1,5 +1,5 @@
 import re
-
+from typing import Tuple, Dict
 
 _re_space = re.compile(r'(?<![()\[\]{}%\'"A-Za-z]) (?![()\[\]{}%\'"A-Za-z])', re.NOFLAG)
 symbols = [' ', '(', ')', '[', ']', '-', '{', '}', '%', "'", '"', ',']
@@ -7,7 +7,7 @@ symbols = [' ', '(', ')', '[', ']', '-', '{', '}', '%', "'", '"', ',']
 
 class RuneTrieNode:
     def __init__(self):
-        self.child = {}
+        self.child: Dict[str, RuneTrieNode] = {}
         self.value = None
 
 
@@ -33,7 +33,7 @@ class RuneTrie:
         node.value = value
         return True
 
-    def __get_longest(self, s: str) -> (str, str):
+    def __get_longest(self, s: str) -> Tuple[str, str]:
         node2 = None
         key2 = ''
         node = self.__root

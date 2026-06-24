@@ -2,8 +2,7 @@ from typing import Dict, List, Optional, Any
 
 import httpx
 from nonebot import on_command
-from nonebot.adapters import Event, Message
-from nonebot.adapters.qq.event import GroupAtMessageCreateEvent
+from nonebot.adapters import Message
 from nonebot.log import logger
 from nonebot.params import CommandArg
 
