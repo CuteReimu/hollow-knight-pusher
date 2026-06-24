@@ -267,13 +267,12 @@ personal_cmd = on_command("查个人", priority=10, block=True)
 
 
 @personal_cmd.handle()
-async def handle_personal(event: Event, args: Message = CommandArg()) -> None:
-    at_me_msg = "@我 " if isinstance(event, GroupAtMessageCreateEvent) else ""
+async def handle_personal(args: Message = CommandArg()) -> None:
     username = args.extract_plain_text().strip()
     if not username:
         await personal_cmd.finish(
-            f"用法：{at_me_msg}/查个人 <用户名>\r\n"
-            f"示例：{at_me_msg}/查个人 SclicheD"
+            f"用法：/查个人 <用户名>\r\n"
+            f"示例：/查个人 SclicheD"
         )
     result_text = f"查询失败"
     try:

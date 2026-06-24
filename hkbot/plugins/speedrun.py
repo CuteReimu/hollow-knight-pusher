@@ -326,8 +326,8 @@ help_cmd = on_message(rule=Rule(_check_at_bot_only), priority=20, block=False)
 async def handle_help() -> None:
     await help_cmd.finish(
         "用法：\r\n"
-        f"  @我 /查榜 <分类> - 查询游戏排行榜\r\n"
-        f"  @我 /查个人 <用户名> - 查询用户的个人最佳成绩"
+        f"  /查榜 <分类> - 查询游戏排行榜\r\n"
+        f"  /查个人 <用户名> - 查询用户的个人最佳成绩"
     )
 
 
@@ -335,13 +335,12 @@ speedrun_cmd = on_command("查榜", priority=10, block=True)
 
 
 @speedrun_cmd.handle()
-async def handle_speedrun(event: Event, args: Message = CommandArg()) -> None:
-    at_me_msg = "@我 " if isinstance(event, GroupAtMessageCreateEvent) else ""
+async def handle_speedrun(args: Message = CommandArg()) -> None:
     raw_arg = args.extract_plain_text().strip()
 
     if not raw_arg:
         await speedrun_cmd.finish(
-            f"用法：{at_me_msg}/查榜 <分类>\r\n"
+            f"用法：/查榜 <分类>\r\n"
             "支持的榜单类型有：" + "，".join(_AVAILABLE_INPUTS)
         )
 
