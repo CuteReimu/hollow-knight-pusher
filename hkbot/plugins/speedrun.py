@@ -6,6 +6,7 @@ import httpx
 from nonebot import on_command, on_message
 from nonebot.adapters import Event, Message
 from nonebot.adapters.qq.event import GroupAtMessageCreateEvent, GroupMessageCreateEvent
+from nonebot.adapters.qq.message import MessageSegment
 from nonebot.log import logger
 from nonebot.params import CommandArg
 from nonebot.rule import Rule
@@ -325,9 +326,11 @@ help_cmd = on_message(rule=Rule(_check_at_bot_only), priority=20, block=False)
 @help_cmd.handle()
 async def handle_help() -> None:
     await help_cmd.finish(
-        "用法：\r\n"
-        f"  /查榜 <分类> - 查询游戏排行榜\r\n"
-        f"  /查个人 <用户名> - 查询用户的个人最佳成绩"
+        MessageSegment.markdown(
+            "### 用法\n"
+            '- <qqbot-cmd-input text="/查榜 " show="/查榜 " /><分类> 查询游戏排行榜\n'
+            '- <qqbot-cmd-input text="/查个人 " show="/查个人 " /><用户名> 查询用户的个人最佳成绩'
+        )
     )
 
 
@@ -340,8 +343,10 @@ async def handle_speedrun(args: Message = CommandArg()) -> None:
 
     if not raw_arg:
         await speedrun_cmd.finish(
-            f"用法：/查榜 <分类>\r\n"
-            "支持的榜单类型有：" + "，".join(_AVAILABLE_INPUTS)
+            MessageSegment.markdown(
+                '用法：<qqbot-cmd-input text="/查榜 " show="/查榜 " /><分类>\r\n'
+                "支持的榜单类型有：" + "，".join(_AVAILABLE_INPUTS)
+            )
         )
 
     normalized = _normalize(raw_arg)

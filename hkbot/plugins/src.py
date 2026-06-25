@@ -3,6 +3,7 @@ from typing import Dict, List, Optional, Any
 import httpx
 from nonebot import on_command
 from nonebot.adapters import Message
+from nonebot.adapters.qq.message import MessageSegment
 from nonebot.log import logger
 from nonebot.params import CommandArg
 
@@ -270,8 +271,10 @@ async def handle_personal(args: Message = CommandArg()) -> None:
     username = args.extract_plain_text().strip()
     if not username:
         await personal_cmd.finish(
-            f"用法：/查个人 <用户名>\r\n"
-            f"示例：/查个人 SclicheD"
+            MessageSegment.markdown(
+                '用法：<qqbot-cmd-input text="/查个人 " show="/查个人 " /><用户名>\r\n'
+                '示例：<qqbot-cmd-input text="/查个人 " show="/查个人 " />SclicheD'
+            )
         )
     result_text = f"查询失败"
     try:
