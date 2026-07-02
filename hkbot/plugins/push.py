@@ -6,13 +6,11 @@ import re
 from pathlib import Path
 
 import httpx
-from nonebot import get_driver, on_message, on_notice, on_command
+from nonebot import get_driver, on_message, on_command
 from nonebot.adapters import Event
 from nonebot.adapters.qq.event import (
     GroupAtMessageCreateEvent,
     GroupMessageCreateEvent,
-    GroupMsgReceiveEvent,
-    GroupMsgRejectEvent,
 )
 from nonebot.log import logger
 from nonebot.rule import Rule
@@ -55,10 +53,10 @@ def _save_pushed(msgs: list[str]) -> None:
     )
 
 
-def _load_pending() -> list[str]:
+def _load_pending() -> dict[str, list[str]]:
     if _PENDING_FILE.exists():
         return json.loads(_PENDING_FILE.read_text(encoding="utf-8"))
-    return []
+    return {}
 
 
 def _save_pending() -> None:
@@ -68,7 +66,7 @@ def _save_pending() -> None:
 
 
 _group_ids: set[str] = _load_group_ids()
-_pending_push: list[str] = _load_pending()
+_pending_push: dict[str, list[str]] = _load_pending()
 
 # ---------------------------------------------------------------------------
 # doTimer：每5分钟拉取 speedrun.com 通知
@@ -120,7 +118,8 @@ async def _do_timer() -> None:
         _save_pushed(pushed)
 
     if results and _group_ids:
-        _pending_push.extend(results)
+        for gid in _group_ids:
+            _pending_push.setdefault(gid, []).extend(results)
         _save_pending()
 
 
@@ -141,34 +140,34 @@ async def _start_timer() -> None:
     asyncio.create_task(_timer_loop())
 
 
-# # ---------------------------------------------------------------------------
-# # 群机器人订阅/退订事件
-# # ---------------------------------------------------------------------------
-#
-# _group_receive_handler = on_command("开启订阅speedrun", priority=10, block=False)
-# _group_reject_handler = on_command("关闭订阅speedrun", priority=10, block=False)
-#
-#
-# @_group_receive_handler.handle()
-# async def _handle_receive(event: Event) -> None:
-#     if not isinstance(event, GroupMessageCreateEvent):
-#         await _group_receive_handler.finish()
-#         return
-#     _group_ids.add(event.group_openid)
-#     _save_group_ids()
-#     logger.info(f"speedrun push enabled for group {event.group_openid}")
-#     await _group_receive_handler.finish("已开启订阅")
-#
-#
-# @_group_reject_handler.handle()
-# async def _handle_reject(event: Event) -> None:
-#     if not isinstance(event, GroupMessageCreateEvent):
-#         await _group_receive_handler.finish()
-#         return
-#     _group_ids.discard(event.group_openid)
-#     _save_group_ids()
-#     logger.info(f"speedrun push disabled for group {event.group_openid}")
-#     await _group_receive_handler.finish("已关闭订阅")
+# ---------------------------------------------------------------------------
+# 群机器人订阅/退订事件
+# ---------------------------------------------------------------------------
+
+_group_receive_handler = on_command("开启订阅speedrun", priority=10, block=False)
+_group_reject_handler = on_command("关闭订阅speedrun", priority=10, block=False)
+
+
+@_group_receive_handler.handle()
+async def _handle_receive(event: Event) -> None:
+    if not isinstance(event, GroupMessageCreateEvent):
+        await _group_receive_handler.finish()
+        return
+    _group_ids.add(event.group_openid)
+    _save_group_ids()
+    logger.info(f"speedrun push enabled for group {event.group_openid}")
+    await _group_receive_handler.finish("已开启订阅")
+
+
+@_group_reject_handler.handle()
+async def _handle_reject(event: Event) -> None:
+    if not isinstance(event, GroupMessageCreateEvent):
+        await _group_receive_handler.finish()
+        return
+    _group_ids.discard(event.group_openid)
+    _save_group_ids()
+    logger.info(f"speedrun push disabled for group {event.group_openid}")
+    await _group_receive_handler.finish("已关闭订阅")
 
 
 # ---------------------------------------------------------------------------
@@ -179,18 +178,19 @@ async def _start_timer() -> None:
 async def _has_pending_for_group(event: Event) -> bool:
     if not isinstance(event, (GroupAtMessageCreateEvent, GroupMessageCreateEvent)):
         return False
-    return event.group_openid in _group_ids and bool(_pending_push)
+    return event.group_openid in _group_ids and bool(_pending_push.get(event.group_openid))
 
 
 _push_sender = on_message(rule=Rule(_has_pending_for_group), priority=99, block=False)
 
 
 @_push_sender.handle()
-async def _send_pending() -> None:
-    # 再次检查，防止同一时刻多条消息并发触发
-    if not _pending_push:
+async def _send_pending(event: Event) -> None:
+    gid = event.group_openid  # type: ignore[union-attr]
+    msgs = _pending_push.get(gid)
+    if not msgs:
         return
-    msg = "\n".join(_pending_push)
-    _pending_push.clear()
+    msg = "\n".join(msgs)
+    _pending_push.pop(gid, None)
     _save_pending()
     await _push_sender.finish(msg)
